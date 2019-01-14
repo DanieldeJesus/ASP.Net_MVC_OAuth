@@ -1,0 +1,27 @@
+﻿@using Microsoft.AspNet.Identity
+@if (Request.IsAuthenticated)
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-user">
+                <li>
+                    <a class="fa fa-sign-out" onclick="sair()">Sair</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+    <!-- Form Logout -->
+    <form id="form-logout" action="@Url.Action("SignOut","Login")" method="post"></form>
+
+    <script>
+        function sair() {
+            $("#form-logout").submit();
+        }
+    </script>
+}
+
+

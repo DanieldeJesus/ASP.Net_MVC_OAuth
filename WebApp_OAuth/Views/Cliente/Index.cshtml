@@ -1,0 +1,320 @@
+﻿@model WebApp_OAuth.Models.Cliente
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header">Cadastros<i class="fa fa-angle-right fa-fw"></i>Clientes</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-md-10" >
+            <button onclick="excluirLstClientes()" class="btn btn-cadastro btn-sm btn-table" id="btnExcluirAll" disabled><i class="fa fa-trash"></i>Excluir Selecionados</button>
+        </div>
+        <div class="col-xs-6 col-md-2" style="text-align:right;padding-bottom: 5px">
+            <button class="btn btn-success btn-sm btn-table" data-toggle="modal" data-target="#novoModal"><i class="fa fa-plus"></i> Novo</button>
+        </div>
+    </div>    
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Lista de Clientes
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table id="tabela-clientes" class="table table-striped table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px; text-align:center"><input type="checkbox" class="checkAll" name="checkAll" /></thstyle="width:>
+                                    <th>#</th>
+                                    <th>Nome</th>
+                                    <th>Data Nascimento</th>
+                                    <th>Email</th>
+                                    <th class="text-center">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbclientes">
+                                @foreach (var item in @ViewBag.Clientes)
+                                {
+                                    <tr>
+                                        <td style="width: 50px; text-align:center"><input type="checkbox" name="check" /></td>
+                                        <td id="ClienteId" style="width: 50px;">@item.ClienteId</td>
+                                        <td id="Nome" >@item.Nome</td>
+                                        <td id="DtNascimento" style="width: 150px;">@String.Format("{0:dd/MM/yyyy}", item.DtNascimento)</td>
+                                        <td id="Email" style="width: 200px;">@item.Email</td>
+                                        <td class="coluna-botoes" style="text-align: center; width: 100px;">
+                                            <a onclick="excluirCliente('@item.ClienteId ')" data-toggle="tooltip" data-placement="left" title="Excluir" class="link-button text-danger"><i class="fa fa-trash"></i></a>
+                                            <a onclick="loadCliente('@item.ClienteId')" data-toggle="tooltip" data-placement="left" title="Editar" class="link-button text-primary"><i class="fa fa-eye"></i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="novoModal" tabindex="-1" role="dialog" aria-labelledby="novoModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        @using (Html.BeginForm("NovoCliente", "Cliente", FormMethod.Post, new { @class = "form-horizontal" }))
+        {
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="novoClienteLb"><i class="fa fa-plus"></i> Novo Cliente</h5>
+                </div>
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Nome, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Nome, new { htmlAttributes = new { @class = "form-control", id = "Nome" } })
+                            @Html.ValidationMessageFor(model => model.Nome, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Sexo, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10" style=" bottom: 0;">
+                            @Html.RadioButtonFor(model => model.Sexo, "M", new { @id = "SexoM" })@Html.Label("Masculino")
+                            @Html.RadioButtonFor(model => model.Sexo, "F", new { @id = "SexoF" })@Html.Label("Feminino")
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DtNascimento, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-5">
+                            @Html.EditorFor(model => model.DtNascimento, new { htmlAttributes = new { @class = "form-control date-input", @id = "DtNascimentoNovo" } })
+                            @Html.ValidationMessageFor(model => model.DtNascimento, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Telefone, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-5">
+                            @Html.EditorFor(model => model.Telefone, new { htmlAttributes = new { @class = "form-control", id = "Fone" } })
+                            @Html.ValidationMessageFor(model => model.Telefone, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", id = "Email" } })
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Fechar</button>
+                    <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Salvar</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        @using (Html.BeginForm("EditarCliente", "Cliente", FormMethod.Post, new { @class = "form-horizontal" }))
+        {
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editClienteLb"><i class="fa fa-pencil"></i> Editar Cliente: <span id="NomeEditTitle" class="text-info" style="font-weight: bold"></span></h5>
+                </div>
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group" style="display:none">
+                        @Html.EditorFor(model => model.ClienteId, new { htmlAttributes = new { @class = "form-control", id = "IdClienteEdit" } })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Nome, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Nome, new { htmlAttributes = new { @class = "form-control", id = "NomeEdit" } })
+                            @Html.ValidationMessageFor(model => model.Nome, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Sexo, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10" style=" bottom: 0;">
+                            @Html.RadioButtonFor(model => model.Sexo, "M", new { @id = "SexoEditM" })@Html.Label("Masculino ")
+                            @Html.RadioButtonFor(model => model.Sexo, "F", new { @id = "SexoEditF" })@Html.Label("Feminino")
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DtNascimento, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-5">
+                            @Html.EditorFor(model => model.DtNascimento, new { htmlAttributes = new { @class = "form-control date-input", @id = "DtNascimentoEdit" } })
+                            @Html.ValidationMessageFor(model => model.DtNascimento, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Telefone, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-5">
+                            @Html.EditorFor(model => model.Telefone, new { htmlAttributes = new { @class = "form-control", id = "FoneEdit" } })
+                            @Html.ValidationMessageFor(model => model.Telefone, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", id = "EmailEdit" } })
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Fechar</button>
+                    <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Salvar</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<form id="excluir-cliente" action="@Url.Action("ExcluirCliente", "Cliente")" method="post">
+    <input type="hidden" name="idCliente" id="ClienteIdDelete" />
+</form>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        
+        $('#DtNascimentoEdit').mask('00/00/0000');
+        $('#DtNascimentoNovo').mask('00/00/0000');
+        $('#FoneEdit').mask('(00) 0000-0000');
+        $('#Fone').mask('(00) 0000-0000');
+
+        $('.checkAll').on('click', function () {
+           
+            $('#btnExcluirAll').prop('disabled', !this.checked);
+
+            $(this).closest('table').find('tbody :checkbox')
+                .prop('checked', this.checked)
+                .closest('tr').toggleClass('selected', this.checked);
+        });
+
+        $('tbody :checkbox').on('click', function () {
+            $(this).closest('tr').toggleClass('selected', this.checked); //Classe de seleção na row
+
+            $(this).closest('table').find('.checkAll').prop('checked', ($(this).closest('table').find('tbody :checkbox:checked').length == $(this).closest('table').find('tbody :checkbox').length)); //Tira / coloca a seleção no .checkAll
+
+            $('#btnExcluirAll').prop('disabled', ($(this).closest('table').find('tbody :checkbox:checked').length > 0 ? false : true));
+        });
+    });
+
+    function excluirCliente(id) {
+        var result = confirm("Deseja realmente excluir esse Cliente");
+        if (result) {
+            $('#ClienteIdDelete').val(id);
+            $('#excluir-cliente').submit();
+        }
+    }
+
+    function excluirLstClientes() {
+        let _list = [];
+        $('#tbclientes tr').each(function (index) {
+            var _obj = {};
+            var position = index;
+
+            switch ($(this).attr("class")) {
+
+                case "selected":
+                    $("#tbclientes tr:eq(" + index + ") td").each(function (indice, i) {
+                        switch ($(this).attr("id")) {
+
+                            case "ClienteId":
+                                _obj.ClienteId = $(this).text();
+                                break;
+
+                            case "Nome":
+                                _obj.Nome = $(this).text();
+                                break;
+
+                            case "Sexo":
+                                _obj.Sexo = $(this).text();
+                                break;
+
+                            case "Telefone":
+                                _obj.Telefone = $(this).text();
+                                break;
+
+                            case "Email":
+                                _obj.Email = $(this).text();
+                                break;
+
+                            case "DtNascimento":
+                                _obj.DtNascimento = $(this).text();
+                                break;
+                        }
+                    });
+                    _list.push(_obj);
+                    break;                
+            }            
+        }); 
+        console.log(_list);
+        $.ajax(
+            {
+                url: "@Url.Action("ExcluirClientes", "Cliente")",
+                method: 'POST',
+                dataType: "json",
+                data: { _listClientes: _list },
+                success: function (json) {
+                    if (json.isRedirect) {
+                        window.location.href = json.redirectUrl;
+                    }
+                },
+                error: function (json) {
+                    if (json.isRedirect) {
+                        window.location.href = json.redirectUrl;
+                    }
+                }
+            });
+    }
+
+    function loadCliente(clienteId) {
+        $.ajax({
+            url: "@Url.Action("GetCliente", "Cliente")",
+            data: { "clienteId": clienteId },
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            type: "GET",
+            success: function (result) {
+                var _dtNascimento = new Date(parseInt(result.DtNascimento.substr(6)))
+
+                $('#IdClienteEdit').val(result.ClienteId);
+                $('#NomeEditTitle').html(result.Nome);
+                $('#NomeEdit').val(result.Nome);
+                
+                if (result.Sexo == 'M')
+                    $('#SexoEditM').prop('checked', true);
+                else
+                    $('#SexoEditF').prop('checked', true);
+
+                $('#DtNascimentoEdit').val(_dtNascimento.format("dd/mm/yyyy")); 
+                $('#EmailEdit').val(result.Email);                
+                $('#FoneEdit').val(result.Telefone);                
+                
+                $('#editModal').modal({
+                    show: true
+                });
+            },
+            error: function (error) {
+                console.log("second error" + error.responseText);
+            }
+        });
+    }
+
+    $(function () {        
+        $('input[type=datetime]').datepicker({
+            dateFormat: 'dd/mm/yy',
+            dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+            dayNamesMin: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S', 'D'],
+            dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
+            monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+            monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+            nextText: 'Proximo',
+            prevText: 'Anterior'
+        });
+    });
+</script>

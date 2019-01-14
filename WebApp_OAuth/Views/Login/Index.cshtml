@@ -1,0 +1,167 @@
+﻿<!DOCTYPE html>
+@{
+    Layout = "~/Views/Shared/_LoginStart.cshtml";
+}
+
+@using WebApp_OAuth.Models
+@model User
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
+<div class="container">
+
+    <div class="d-flex justify-content-center h-100" style="position:fixed; padding-left:25%">
+        <div class="card">
+            <div class="card-header">
+                <h3>Sign In</h3>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm("Login", "Login", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form col-md-12 center-block", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="input-group form-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        </div>
+                        @Html.TextBoxFor(m => m.Login, new { @class = "form-control", @placeholder = "Usuário" })
+                        @*@Html.ValidationMessageFor(m => m.Login, "", new { @class = "text-danger" })*@
+                    </div>
+                    <div class="input-group form-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-key"></i></span>
+                        </div>
+                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Senha" })
+                        @*@Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })*@
+                    </div>
+                    <div class="row align-items-center remember">
+                        @Html.CheckBoxFor(m => m.RememberMe)Lembrar-me
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Login" class="btn float-right login_btn" id="btn-submit">
+                    </div>
+                }
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-center links">
+                    Registrar uma nova conta!<p>@Html.ActionLink("Registrar", "Register", new { id = "linkRegister" }, new { @class = "linkRegister", @data_target = "linkRegister" })</p>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <p>@Html.ActionLink("Esqueceu sua senha?", "ForgotPassword", new { id = "linkForgotPassword" }, new { @class = "linkForgotPassword", @data_target = "linkForgotPassword" })</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-end" style="position:relative; z-index:1; float: right;">
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-warning" role="alert" style="margin-top: 15px;">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <strong>Oops!</strong>
+                <p>
+                    @ViewBag.Error
+                </p>
+            </div>
+        }
+        @if (ViewBag.Success != null)
+        {
+            <div class="alert alert-success" role="alert" style="margin-top: 15px;">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <strong>Sucesso!</strong>
+                <p>
+                    @ViewBag.Success
+                </p>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-plus-circle"></i> Registrar nova conta</h5>
+            </div>
+            <div class="modal-body">
+
+                @using (Html.BeginForm("Register", "Login", FormMethod.Post, new { @class = "form col-md-12 center-block", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary("", new { @class = "text-danger" })
+                    <div class="form-group">
+                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control input-lg", @placeholder = "Nome" })
+                    </div>
+                    <div class="form-group">
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control input-lg", @placeholder = "E-mail", id = "regEmail" })
+                    </div>
+                    <div class="form-group">
+                        @Html.TextBoxFor(m => m.Login, new { @class = "form-control input-lg", @placeholder = "Login", id = "regLogin" })
+                    </div>
+                    <div class="form-group">
+                        @Html.PasswordFor(m => m.Password, new { @class = "form-control input-lg", @placeholder = "Senha", id = "regSenha" })
+                    </div>
+                    <div class="form-group">
+                        @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control input-lg", @placeholder = "Confirmação da senha" })
+                    </div>
+                    <div class="form-group">
+                        <div>
+                            <input type="submit" class="btn btn-primary btn-lg btn-block" value="Registrar" />
+                        </div>
+                    </div>
+                    <span><p>@Html.ActionLink("Agora não, obrigado!", "Index")</p></span>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" role="dialog" aria-labelledby="forgotPasswordModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-question-circle"></i> Esqueceu sua senha?</h5>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("ForgotPassword", "Login", FormMethod.Post, new { @class = "form col-md-12 center-block", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary("", new { @class = "text-danger" })
+                    <div class="form-group">
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control input-lg", @placeholder = "E-mail", id = "fgotEmail" })
+                    </div>
+                    <div class="form-group">
+                        <div>
+                            <input type="submit" class="btn btn-primary btn-lg btn-block" value="Enviar" />
+                        </div>
+                    </div>
+                    <span><p>@Html.ActionLink("Retornar ao Login", "Index")</p></span>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $(".linkRegister").on("click", function (e) {
+                e.preventDefault();
+                $('#registerModal').modal({
+                    keyboard: true
+                }, 'show');
+                return false;
+            });
+
+            $(".linkForgotPassword").on("click", function (e) {
+                e.preventDefault();
+                $('#forgotPasswordModal').modal({
+                    keyboard: true
+                }, 'show');
+                return false;
+            });
+        });
+
+    </script>
+}
+
